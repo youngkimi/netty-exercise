@@ -1,8 +1,6 @@
-# Netty In Action
+# Chapter 1. Netty—asynchronous and event-driven
 
-## 1. Chapter 1. Netty—asynchronous and event-driven
-
-### Traditional Socket Network Programming for Java API(java.net)
+## Traditional Socket Network Programming for Java API(java.net)
 
 ```java
 public class BlockingNetworking implements Runnable {
@@ -62,7 +60,7 @@ public class BlockingNetworking implements Runnable {
 }
 ```
 
-### Problems due to blocking I/O
+## Problems due to blocking I/O
 
 1. At any point, lots of thread could be dormant, waiting for unpredictable input/output data to appear on the line.
     It is likely to be the waste of resources.
@@ -98,9 +96,9 @@ OS는 kqueue 등의 자료구조를 통해 JVM보다 더 효율적으로 수 많
 
 네티는 이런 어려움을 해결하고자 탄생했다. 보다 고수준에서, 안전하고 효율적으로 소켓을 관리할 수 있는 기능을 제공한다.
 
-### Netty’s core components
+## Netty’s core components
 
-#### 1. Channel
+### 1. Channel
 
 A `Channel` is an open connection to an entity such as a hardware device, a file, a network socket, or a program component, enabling one or more distinct I/O operations.
 For now, think of it as a vehicle for inbound(outbound) data. As such, it can be open(connected) or closed(disconnected). 
@@ -109,7 +107,7 @@ For now, think of it as a vehicle for inbound(outbound) data. As such, it can be
 이 연결로 하나 이상의 독립적인 입출력 작업을 수행할 수 있다. 현재로서는 데이터의 입출력(수신 또는 송신)을 위한 수단으로 생각하면 된다.
 따라서, `Channel`은 열려 있거나(Connected) 닫혀 있을 수(Disconnected) 있다.
 
-#### 2. Callbacks
+### 2. Callbacks
 
 A `Callback` is just a method that you can pass to another method. This allows the latter to call the former at the appropriate time. 
 Callbacks are commonly used in programming to let other parts of the code know when an operation has been finished.
@@ -136,7 +134,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 }
 ```
 
-#### 3. Future
+### 3. Future
 
 A Future provides another way to notify an application when an operation has completed.
 This object allows us to access the result of an asynchronous operation that will be completed at some point in the future.
@@ -179,3 +177,65 @@ In summary,  `ChannelFutureListener` is more advanced version of `Callback` beca
 It allows for detailed monitoring of operation completion, supports event-driven processing, and improves resource management by avoiding thread blocking.
 
 ### 4. Events and handlers
+
+Netty uses distinct events to notify us about changes of state or the status of operations. 
+This allows us to trigger the appropriate action based on the event that has occurred. 
+Such actions might include
+
+- Logging
+- Data transformation
+- Flow-control
+- Application logic
+
+Netty is a networking framework, so events are categorized by their relevance to inbound or outbound data flow.
+Events that may be triggered by `inbound` data or an associated change of state include
+
+- Active or inactive connections
+- Data reads
+- User events
+- Error events
+
+An `outbound` event is the result of an operation that will trigger an action in the future, which may be
+
+- Opening or closing a connection to a remote peer
+- Writing or flushing data to a socket
+
+Every event can be dispatched to a user-implemented method of a handler class. 
+This is a good example of an event-driven paradigm translating directly into application building blocks.
+
+![img_3](/img/chapter01_3.jpg)
+
+Netty’s ChannelHandler provides the basic abstraction for handlers like the ones shown above.
+We’ll have a lot more to say about ChannelHandler in due course, but for now you can think of each handler instance as a kind of callback to be executed in response to a specific event.
+
+Netty provides an extensive set of predefined handlers that you can use out of the box, including handlers for protocols such as HTTP and SSL/TLS.
+Internally, `ChannelHandlers` use events and futures themselves, making them consumers of the same abstractions your applications will employ.
+
+
+###  Putting it all together
+#### Futures, callbacks, and handlers
+
+Netty’s asynchronous programming model is built on the concepts of Futures and callbacks, with the dispatching of events to handler methods happening at a deeper level. 
+Taken together, these elements provide a processing environment that allows the logic of your application to evolve independently of any concerns with network operations. 
+This is a key goal of Netty’s design approach.
+
+Intercepting operations and transforming inbound or outbound data on the fly requires only that you provide callbacks or utilize the Futures that are returned by operations. 
+This makes chaining operations easy and efficient and promotes the writing of reusable, generic code.
+
+Netty's asynchronous programming model is based on `Future` and `Callback`, and the dispatching of events to handler methods happens at a deeper level.
+With these components, we can develop the logic of our application independently of network operations.
+
+Intercepting operations and transforming inbound or outbound data on the fly requires only that you provide callbacks or utilize the Futures that are returned by operations.
+This makes chaining operations easy and efficient and promotes the writing of reusable, generic code.
+
+#### Selectors, events, and event loops
+
+Netty abstracts the Selector away from the application by firing events, eliminating all the handwritten dispatch code that would otherwise be required. 
+Under the covers, an `EventLoop` is assigned to each Channel to handle all the events, including
+
+- Registration of interesting events
+- Dispatching events to ChannelHandlers
+- Scheduling further actions
+
+The EventLoop itself is driven by only one thread that handles all the I/O events for one Channel and does not change during the lifetime of the EventLoop. 
+This simple and powerful design eliminates any concern you might have about synchronization in your ChannelHandlers, so you can focus on providing the right logic to be executed when there is interesting data to process. 

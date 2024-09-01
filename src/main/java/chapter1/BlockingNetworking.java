@@ -10,12 +10,11 @@ import java.nio.channels.Channel;
 
 public class BlockingNetworking implements Runnable {
 
-    int portNumber = 0;
+    int portNumber;
 
     public BlockingNetworking(int portNumber) {
         this.portNumber = portNumber;
     }
-
 
     private static String processRequest(String request) {
         return "Get Request : " + request;
@@ -61,5 +60,4 @@ public class BlockingNetworking implements Runnable {
             System.out.println("Exception Occurs: " + e.getMessage());
         }
     }
-
 }
