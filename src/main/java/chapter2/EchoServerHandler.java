@@ -8,7 +8,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
 
-// Indicated that a ChannelHandler can be shared by multiple channels.
+// Indicated that a ChannelHandler can be shared by multiple channels. (For documentation)
+// It means this Handler is thread-safe. If this annotation is not specified, you have to create a new handler instance every time.
 @Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
