@@ -273,6 +273,6 @@ TCP guarantees that the `ByteBuf`s will arrive in the order in which they were s
 
     비동기 방식으로 작동한다면 만약 응답이 도착 했을 때, 요청을 보낸 스레드가 작업을 이어 진행해야 하지 않을까?
     그렇지 않다면, 응답을 받은 스레드는 기존 작업 내용을 모르기 때문에 요청을 보낸 스레드의 상태를 적재하는 과정이 필요하고, 이는 곧 Context Switch와 비슷한 영향을 낼 것이다. 
-    책에 내용이 있을 법 한데 봐야겠다...
+
 -->
 

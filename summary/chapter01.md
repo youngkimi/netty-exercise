@@ -187,8 +187,11 @@ Such actions might include
 - Flow-control
 - Application logic
 
+네티는 작업의 상태 변화를 알리기 위해 특정 이벤트를 발행한다.
+이로써 우리는 발생한 이벤트에 대해 적절한 처리를 맞추어 수행할 수 있다. 그러한 처리로는 로그, 데이터 변환, 흐름 제어, 어플리케이션 로직 등을 포함한다. 
+
 Netty is a networking framework, so events are categorized by their relevance to inbound or outbound data flow.
-Events that may be triggered by `inbound` data or an associated change of state include
+Events that may be triggered by inbound data or an associated change of state include
 
 - Active or inactive connections
 - Data reads
@@ -200,8 +203,24 @@ An `outbound` event is the result of an operation that will trigger an action in
 - Opening or closing a connection to a remote peer
 - Writing or flushing data to a socket
 
+Netty는 네트워킹 프레임워크이므로, 이벤트는 인바운드(수신) 또는 아웃바운드(송신) 데이터 흐름과 관련하여 분류된다. 
+인바운드 데이터나 관련된 상태 변경으로 인해 트리거될 수 있는 이벤트는 다음과 같다:
+
+- 연결 활성화, 비활성화
+- 데이터 읽기
+- 유저 이벤트
+- 에러 이벤트
+
+아웃바운드 이벤트는 미래에 어떤 처리(행동)을 트리거할 수 있는 작업의 결과로서, 다음과 같다. 
+
+- 원격 피어에 대한 연결 열기(닫기)
+- 소켓에 데이터 쓰기, 전송 데이터 비우기 (Flush)
+
 Every event can be dispatched to a user-implemented method of a handler class. 
 This is a good example of an event-driven paradigm translating directly into application building blocks.
+
+모든 이벤트는 핸들러 클래스의 유저가 작성한 메서드로 전파될 수 있다.
+아래는 이벤트 기반 패러다임이 응용 프로그램의 기본 구성 요소로 직접 변환되는 좋은 예시를 보여준다.  
 
 ![img_3](/img/chapter01_3.jpg)
 
