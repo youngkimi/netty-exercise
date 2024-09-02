@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id "com.gradleup.shadow" version "8.3.0"
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation group: 'io.netty', name: 'netty-all', version: '4.1.112.Final'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+shadowJar {
+    archiveBaseName.set('EchoServer')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    manifest {
+        attributes(
+                'Main-Class': 'EchoServer'
+        )
+    }
+}
