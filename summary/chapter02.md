@@ -261,7 +261,63 @@ TCP guarantees that the `ByteBuf`s will arrive in the order in which they were s
 
 ### Bootstrapping the Client 
 
+It's similar to bootstrapping a server, except that you need to define the host and port to connect to, rather than binding a listening port.
 
+```java
+public class EchoClient {
+	private final String host;
+	private final int port;
+
+	public EchoClient(String host, int port) {
+		this.host = host;
+		this.port = port;
+	}
+
+	public void start() throws Exception {
+		EventLoopGroup group = new NioEventLoopGroup();
+		try {
+			Bootstrap b = new Bootstrap();
+			b.group(group)
+				.channel(NioSocketChannel.class)
+				.remoteAddress(new InetSocketAddress(host, port))
+				.handler(new ChannelInitializer<>() {
+					@Override
+					protected void initChannel(Channel ch) throws Exception {
+						ch.pipeline().addLast(
+							new EchoClientHandler()
+						);
+					}
+				});
+			ChannelFuture f = b.connect().sync();
+			f.channel().closeFuture().sync();
+		} finally {
+			group.shutdownGracefully().sync();
+		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		if (args.length != 2) {
+			System.err.println(
+				"Usage: " + EchoClient.class.getSimpleName() + " <host> <port>");
+			return;
+		}
+
+		String host = args[0];
+		int port = Integer.parseInt(args[1]);
+		new EchoClient(host, port).start();
+	}
+}
+```
+
+In this example, we're going to use `NioSocketChannel` for the client as well. 
+However, you can obviously choose different Channel types for the server and client.
+
+> ### Sum Up
+> A Bootstrap instance is created to initialize the client.
+> An NioEventLoopGroup instance is assigned to handle the event processing, which includes creating new connections and processing inbound and outbound data. 
+> An InetSocketAddress is created for the connection to the server.
+> An EchoClientHandler will be installed in the pipeline when the connection is established.
+> After everything is set up, Bootstrap.connect() is called to connect to the remote peer.
 
 <!-- 
     Blocking 보다는 Non-Blocking의 Context Switch 비용이 더 크다.
