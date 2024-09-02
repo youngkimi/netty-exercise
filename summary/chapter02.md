@@ -260,3 +260,19 @@ TCP guarantees that the `ByteBuf`s will arrive in the order in which they were s
 `exceptionCaught()` is same as the one in `EchoServerHandler`.
 
 ### Bootstrapping the Client 
+
+
+
+<!-- 
+    Blocking 보다는 Non-Blocking의 Context Switch 비용이 더 크다.
+    Blocking은 외부 API에 보낸 요청의 응답을 대기하는 스레드가 유휴 상태로 진입하면서 해당 Context를 저장하고, 이어 작업을 재개할 때 Context를 보존해야 하기 때문이다. 
+    Non-Blocking은 응답을 대기하면서 스레드가 유휴 상태로 진입하지 않고, 다른 작업을 진행할 수 있다. 이 다른 작업은, Netty의 이벤트 큐의 적재되어 있다. 
+    이러한 이유로 기본적으로 Blocking 방식의 Tomcat의 기본 스레드 설정 개수는 200개로 Non-Blocking 방식의 Netty는 기기 코어 * 2 방식의 스레드 수보다 훨씬 많다. 
+    스레드 수가 많다는 것은, 더 많은 Context Switch 비용이 발생한다는 것을 의미하고, 스레드 간 경쟁상태로 돌입할 여지가 더 많음을 의미한다. 
+    (물론 Tomcat 또한 Java NIO를 활용하여 Non Blocking 방식으로 동작하게끔 할 수 있기는 하다.)
+
+    비동기 방식으로 작동한다면 만약 응답이 도착 했을 때, 요청을 보낸 스레드가 작업을 이어 진행해야 하지 않을까?
+    그렇지 않다면, 응답을 받은 스레드는 기존 작업 내용을 모르기 때문에 요청을 보낸 스레드의 상태를 적재하는 과정이 필요하고, 이는 곧 Context Switch와 비슷한 영향을 낼 것이다. 
+    책에 내용이 있을 법 한데 봐야겠다...
+-->
+
